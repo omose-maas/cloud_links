@@ -8,7 +8,6 @@
 
 #!/usr/bin/env python
 import sys,os
-sys.path.append('../src/')
 import rospy
 from std_msgs.msg import String
 from socketIO_client import SocketIO
@@ -25,8 +24,9 @@ class cloud_links_core:
 		self.rpc = rpc
 		self.__onReady()
 
-		self.socketIO = SocketIO(host_url, port)
+		self.socketIO = SocketIO(self.host, port)
 		self.socketIO.on('my_request', self.on_my_resquest)
+		
 
 
 	def __onReady(self):
@@ -34,9 +34,9 @@ class cloud_links_core:
 		self.send_msg(request_json)
 
 	def send_msg(self,value):
-		response = requests.post(self.host_url, value)
-		parsed_response = json.loads(response)
-		print json.dumps(parsed_response, indent=4)
+		requests.post(self.host_url, value)
+		# parsed_response = json.loads(response)
+		# print json.dumps(parsed_response, indent=4)
 
 	def on_my_resquest(self,request):
 		response_json = self.rpc.call(request)	
@@ -59,8 +59,7 @@ def main():
 	status_pubfreq = rospy.get_param('~status_publish_frequency', 10)
 	publish_status = rospy.get_param('~publish_status', True)
 
-
-	driverlesscar = Driverlesscar()
+	driverlesscar = DriverlessCar()
 	rpc = JsonRpc(driverlesscar)
 
 	try:
@@ -69,8 +68,10 @@ def main():
 			if publish_status:
 				request_json = pyjsonrpc.create_request_json("CarStatus",driverlesscar.get_status())
 				core.send_msg(request_json)
-			core.socketIO.wait(seconds = status_pubfreq)
-
+			try:
+				core.socketIO.wait(seconds = status_pubfreq)
+			except KeyboardInterrupt:
+				break
 	except rospy.ROSInterruptException:
 		sock.close()
  
