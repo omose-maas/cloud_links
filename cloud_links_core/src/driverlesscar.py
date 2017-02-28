@@ -8,8 +8,8 @@
 
 #!/usr/bin/env python
 import rospy
-from geometry_msgs import NavSatFix
-from move_base_msgs import MoveBaseActionGoal
+from sensor_msgs.msg import NavSatFix
+from move_base_msgs.msg import MoveBaseActionGoal
 from std_msgs.msg import String
 import requests, pyjsonrpc, json
 
@@ -26,7 +26,7 @@ class DriverlessCar:
     def to_set_destination(self,destination):
         pass
 
-    def pick_user_up(self,current_location, destination)
+    def pick_user_up(self,current_location, destination):
         pass
 
     def __callback(self,ros_data):
