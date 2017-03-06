@@ -8,8 +8,7 @@
 
 #!/usr/bin/env python
 import rospy
-from sensor_msgs.msg import NavSatFix
-from move_base_msgs.msg import MoveBaseActionGoal
+from sensor_msgs.msg import NavSatFix, NavSatStatus
 from std_msgs.msg import String
 import requests, pyjsonrpc, json
 
@@ -18,23 +17,27 @@ class DriverlessCar:
 	def __init__(self):
 		self.latitude = '31.253708'
 		self.longitude = '130.655714'
-		self.subscriber = rospy.Subscriber("fix", NavSatFix, self.__callback)
-		self.goalpub = self.publisher = rospy.Publisher('goal', MoveBaseActionGoal, queue_size=50)
+		self.subscriber = rospy.Subscriber("gps/filtered", NavSatFix, self.__callback)
+		self.goalpub = self.publisher = rospy.Publisher('utm', NavSatFix, queue_size=50)
 
 	def get_status(self):
-		status = {'lat' : self.latitude, 'lon' : self.longitude}
+		status = {'method':"get_status", 'lat' : self.latitude, 'lon' : self.longitude}
 		return status
 
 	def set_destination(self,destination):
-		print destination['latitude']
-		print destination['longitude']
-		msg = MoveBaseActionGoal()
+		msg = NavSatFix()
 		msg.header.stamp = rospy.get_rostime()
-		msg.header.frame_id = frame_id
-		msg.sentence = sentence
-		
-		self.pub.publish(msg)
-		return "a"
+		msg.header.frame_id = "utm"
+		msg.latitude = float(destination['latitude'])
+		msg.longitude = float(destination['longitude'])
+		msg.altitude = 0
+		msg.status.status = NavSatStatus.STATUS_GBAS_FIX
+		msg.status.service = 0
+		msg.position_covariance = [0] * 9
+		msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
+		self.goalpub.publish(msg)
+		ret = {'method':"set_position", 'msg': "got it"}
+		return ret
 
 	def pick_user_up(self,current_location, destination):
 		pass

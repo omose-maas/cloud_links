@@ -68,10 +68,7 @@ def main():
 			if publish_status:
 				request_json = pyjsonrpc.create_request_json("CarStatus",driverlesscar.get_status())
 				core.send_msg(request_json)
-			try:
 				core.socketIO.wait(seconds = status_pubfreq)
-			except KeyboardInterrupt:
-				break
 	except rospy.ROSInterruptException:
 		sock.close()
  
