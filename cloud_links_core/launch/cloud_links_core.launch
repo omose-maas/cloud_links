@@ -6,12 +6,7 @@
 <launch>
   
   <node pkg="cloud_links_core" type="cloud_links_core.py" name="cloud_links_core" />
-  <node pkg="gps_common" type="utm_odometry_node" name="utm_odometry_node">
-    <param name="frame_id" value="odom" />
-    <param name="chaild_frame_id" value="utm" />
-    <remap from="fix" to="utm" />
-    <remap from="odom" to="odom/goal" />
-  </node>
 
+  <include file="$(find utm_simple_goal)/launch/utm_simple_goal.launch" />
 
 </launch>
