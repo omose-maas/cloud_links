@@ -63,8 +63,9 @@ def main():
 	namespace = rospy.get_param('~namespace', '/post')
 	status_pubfreq = rospy.get_param('~status_publish_frequency', 10)
 	publish_status = rospy.get_param('~publish_status', True)
+	state_fix_topic = rospy.get_param('~state_fix_topic', "gps/filtered")
 
-	driverlesscar = DriverlessCar()
+	driverlesscar = DriverlessCar(state_fix_topic)
 	rpc = JsonRpc(driverlesscar)
 
 	try:

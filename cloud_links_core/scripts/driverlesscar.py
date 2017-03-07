@@ -14,10 +14,10 @@ import requests, pyjsonrpc, json
 
 
 class DriverlessCar:
-	def __init__(self):
+	def __init__(self,state_fix_topic):
 		self.latitude = '31.253708'
 		self.longitude = '130.655714'
-		self.subscriber = rospy.Subscriber("gps/filtered", NavSatFix, self.__callback)
+		self.subscriber = rospy.Subscriber(state_fix_topic, NavSatFix, self.__callback)
 		self.goalpub = self.publisher = rospy.Publisher('utm', NavSatFix, queue_size=50)
 
 	def get_status(self):
@@ -36,7 +36,7 @@ class DriverlessCar:
 		msg.position_covariance = [0] * 9
 		msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
 		self.goalpub.publish(msg)
-		ret = {'method':"set_position", 'msg': "got it"}
+		ret = {'method':"set_position", 'msg': "got   it"}
 		return ret
 
 	def pick_user_up(self,current_location, destination):
