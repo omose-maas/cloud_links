@@ -26,6 +26,7 @@ class cloud_links_core:
 
 		self.socketIO = SocketIO(self.host, port)
 		self.socketIO.on('my_request', self.on_my_resquest)
+		# self.socketIO.on('redirect', self.on_redirect)
 		
 
 
@@ -41,6 +42,10 @@ class cloud_links_core:
 	def on_my_resquest(self,request):
 		response_json = self.rpc.call(request)	
 		self.socketIO.emit('my_response', response_json)
+
+	# def on_redirect(self,request):
+	# 	print "hello"
+	# 	pass
 
 
 class JsonRpc(pyjsonrpc.JsonRpc):
