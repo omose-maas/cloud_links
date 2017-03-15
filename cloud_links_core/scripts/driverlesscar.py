@@ -32,7 +32,7 @@ class DriverlessCar:
 		self._goalpub = rospy.Publisher('move_base_simple/goal', PoseStamped, queue_size=50)
 
 	def get_status(self):
-		status = {'method':"get_status", 'lat' : self._latitude, 'lon' : self._longitude}
+		status = {'method':"get_status", 'lat' : self._latitude, 'lon' : self._longitude, 'car_number': 1}
 		return status
 
 	def set_destination(self,destination):
@@ -51,7 +51,8 @@ class DriverlessCar:
 		return ret
 
 	def set_fixed_destination(self,fixedkey):
-		name = fixedkey['location_name'] 
+		name = fixedkey['location_name']
+		print name
 		if name in self._lists:
 			goal = PoseStamped()
 			goal.header.frame_id = "map"
@@ -60,6 +61,7 @@ class DriverlessCar:
 			goal.pose.orientation.z = self._lists[name]['orientation.z']
 			goal.pose.orientation.w = self._lists[name]['orientation.w']
 			goal.header.stamp = rospy.Time()
+			print "pub goal"
 			self._goalpub.publish(goal)
 			ret = {'method':"set_fixed_destination", 'msg': "set destination"}
 		else:

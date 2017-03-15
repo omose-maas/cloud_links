@@ -22,7 +22,7 @@ class cloud_links_core:
 		self.post_namespace = post_namespace
 		self.host_url = host + ":" + str(port) + post_namespace
 		self.rpc = rpc
-		self.__onReady()
+		#self.__onReady()
 
 		self.socketIO = SocketIO(self.host, port)
 		self.socketIO.on('my_request', self.on_my_resquest)
@@ -40,8 +40,10 @@ class cloud_links_core:
 		# print json.dumps(parsed_response, indent=4)
 
 	def on_my_resquest(self,request):
+		parsed_request = json.loads(request)
+		print json.dumps(parsed_request, indent=4)
 		response_json = self.rpc.call(request)	
-		self.socketIO.emit('my_response', response_json)
+		#self.socketIO.emit('my_response', response_json)
 
 	# def on_redirect(self,request):
 	# 	print "hello"
@@ -58,12 +60,12 @@ class JsonRpc(pyjsonrpc.JsonRpc):
 def main():
 	rospy.init_node('cloud_links_core', anonymous=True)
 
-	host_url = rospy.get_param('~host_url','http://localhost')
-	port = rospy.get_param('~port',5000)
-	namespace = rospy.get_param('~namespace', '/post')
+	host_url = rospy.get_param('~host_url','http://124.219.162.203')
+	port = rospy.get_param('~port',5300)
+	namespace = rospy.get_param('~namespace', '/car_status_post')
 	status_pubfreq = rospy.get_param('~status_publish_frequency', 10)
 	publish_status = rospy.get_param('~publish_status', True)
-	state_fix_topic = rospy.get_param('~state_fix_topic', "gps/filtered")
+	state_fix_topic = rospy.get_param('~state_fix_topic', "fix")
 
 	driverlesscar = DriverlessCar(state_fix_topic)
 	rpc = JsonRpc(driverlesscar)
@@ -72,8 +74,10 @@ def main():
 		core = cloud_links_core(host_url, port, namespace, rpc)
 		while not rospy.is_shutdown():
 			if publish_status:
-				request_json = pyjsonrpc.create_request_json("CarStatus",driverlesscar.get_status())
-				core.send_msg(request_json)
+				#request_json = pyjsonrpc.create_request_json("CarStatus",driverlesscar.get_status())
+				jsonmsg = json.dumps(driverlesscar.get_status())
+				print json.loads(jsonmsg)
+				core.send_msg(jsonmsg)
 				core.socketIO.wait(seconds = status_pubfreq)
 	except rospy.ROSInterruptException:
 		sock.close()
