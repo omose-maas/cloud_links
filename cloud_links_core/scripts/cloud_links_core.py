@@ -27,8 +27,6 @@ class cloud_links_core:
 		self.socketIO = SocketIO(self.host, port)
 		self.socketIO.on('my_request', self.on_my_resquest)
 		# self.socketIO.on('redirect', self.on_redirect)
-		
-
 
 	def __onReady(self):
 		request_json = pyjsonrpc.create_request_json("onReady")

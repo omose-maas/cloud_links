@@ -25,7 +25,7 @@ class DriverlessCar:
 		filename = os.path.join(datapath,'fixeddestination.json')
 		with open(filename,'r') as f:
 			self._lists = json.load(f)
-		self._subscriber = rospy.Subscriber(state_fix_topic, NavSatFix, self.__callback)
+		self._subscriber = rospy.Subscriber('/fix', NavSatFix, self.__callback)
 		#goal in llh
 		self._goalfixpub = rospy.Publisher('utm', NavSatFix, queue_size=50)
 		#goal in map pose

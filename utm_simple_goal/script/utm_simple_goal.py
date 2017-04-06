@@ -35,6 +35,10 @@ class utm_simple_goal:
 			self.goal.header.frame_id = self.odom_pose.header.frame_id
 			self.goal = tf2_geometry_msgs.do_transform_pose(self.odom_pose, self.trans)
 			self.goal.header.stamp = rospy.Time()
+			self.goal.pose.orientation.x = 0
+			self.goal.pose.orientation.y = 0
+			self.goal.pose.orientation.z = 0.12
+			self.goal.pose.orientation.w = 0.99
 			self.goalpub.publish(self.goal)
 		else:
 			rospy.loginfo("it has not get goal odom topic")
